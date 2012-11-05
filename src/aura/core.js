@@ -277,6 +277,11 @@ define(['aura_base'], function(base) {
 
     for (; i < l; i++) {
       var widget = list[i];
+
+      if (widget.channel === undefined || typeof widget.channel !== 'string') {
+        throw new Error('Widget at position ' + i + ' is missing channel definition');
+      }
+
       var file = decamelize(widget.channel);
 
       promises.push(load(file, widget.options || {}));

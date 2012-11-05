@@ -137,12 +137,22 @@ define(['aura_core'], function (core) {
       });
     });
 
-    xdescribe('start', function() {
-      it('should throw an error if all the params are not specified', function () {});
-      it('should throw an error if all the params are not the correct type', function () {});
-      it('should load (require) a widget that corresponds with a channel', function () {});
-      it('should call every callback for the channel, within the correct context', function () {});
-      it('should trigger a requirejs error if the widget does not exist', function (){});
+    describe('start', function() {
+      it('should throw an error if all the params are not specified', function () {
+        expect(function () {
+            core.start();
+          }).toThrow(new Error('Channel must be defined as an array'));
+      });
+      
+      it('should throw an error if all the params are not the correct type', function () {
+        expect(function () {
+            core.start({});
+          }).toThrow(new Error('Widget at position 0 is missing channel definition'));
+      });
+
+      xit('should load (require) a widget that corresponds with a channel', function () {});
+      xit('should call every callback for the channel, within the correct context', function () {});
+      xit('should trigger a requirejs error if the widget does not exist', function (){});
     });
 
     xdescribe('stop', function() {

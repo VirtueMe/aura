@@ -101,6 +101,9 @@ module.exports = function(grunt) {
   // default build task
   grunt.registerTask('default', 'build');
 
+  // test build task
+  grunt.registerTask('test', 'jasmine');
+
   // launch node server to view the projct
   grunt.registerTask('launch', 'server watch');
 
