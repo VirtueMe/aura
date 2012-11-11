@@ -44,6 +44,10 @@
           'deferred': {
             exports: 'Deferred',
             deps: ['dom']
+          },
+          jquery_ui: {
+          	deps: ['dom'],
+          	exports: '$.ui'
           }
 				},
 				paths: {
@@ -61,7 +65,7 @@
           dom: 'src/aura/lib/dom',
 
 					core: 'src/extensions/backbone/core',
-					perms: 'src/extensions/backbone/permissions',
+					perms: 'src/apps/demo/js/permissions',
 					sandbox: 'src/extensions/backbone/sandbox',
 
           aura_base: 'src/aura/base',
@@ -74,14 +78,16 @@
 					localstorage: 'src/extensions/backbone/lib/localstorage',
 					underscore: 'src/aura/lib/lodash',
 					fullcalendar: 'src/extensions/backbone/lib/fullcalendar.min',
-					jquery_ui: 'src/extensions/backbone/lib/jquery-ui.min'
+					jquery_ui: 'src/extensions/backbone/lib/jquery-ui.min',
+
+					i18n: 'src/i18n'
 				}
 		};
     require.config( require.aura );
 
     /*****/
   	<!-- require source files here... -->
-		require(['spec/js/mediator_spec'], function () {
+		require(['spec/js/mediator_spec', 'spec/js/todos_spec'], function () {
 
       var htmlReporter = new jasmine.HtmlReporter();
       var jasmineEnv = jasmine.getEnv();
