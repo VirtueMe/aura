@@ -23,7 +23,10 @@ module.exports = function(grunt) {
 
     // jasmine testsuites
     jasmine: {
-      files: ['spec/SpecRunner.html']
+      all: {
+        src: ['spec/SpecRunner.html'],
+        errorReporting: true
+      }
     },
 
     // tasks to be executed and files
