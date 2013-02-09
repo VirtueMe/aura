@@ -16,7 +16,7 @@ define(['sandbox', 'text!../templates/controls.html'], function(sandbox, control
 
     initialize: function() {
       this.$el.html(controlTemplate);
-      this.$el.find('.language').val(require.aura.locale);
+      this.$el.find('.language').val(this.options.locale);
     },
 
     render: function() {

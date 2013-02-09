@@ -278,14 +278,14 @@ define(['aura_core', 'aura_sandbox', 'sandbox_perms'], function(mediator, aura_s
 
           it("should throw an error if subscriber is NOT a string", function() {
             expect(function() {
-              permissions.validate({}, SANDBOX2);;
+              permissions.validate({}, SANDBOX2);
             }).toThrow(new Error('Subscriber must be a string'));
           });
 
           it("should throw an error if channel is NOT a string", function() {
             
             expect(function() {
-              permissions.validate(SANDBOX1, {});;
+              permissions.validate(SANDBOX1, {});
             }).toThrow(new Error('Channel must be a string'));
           });
 
@@ -327,7 +327,6 @@ define(['aura_core', 'aura_sandbox', 'sandbox_perms'], function(mediator, aura_s
       describe('on (subscribe / listen)', function() {
 
         beforeEach(function() {
-
           mediator.removeAllListeners();
         });
 

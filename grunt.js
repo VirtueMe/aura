@@ -18,7 +18,7 @@ module.exports = function(grunt) {
 
     // js linting
     lint: {
-      files: ['src/aura/*.js', 'src/apps/**/*.js', 'src/widgets/**/*.js', 'src/extensions/*/*.js']
+      files: ['src/aura/*.js', 'src/apps/**/*.js', 'src/widgets/**/*.js', 'src/extensions/*/*.js', 'spec/js/**/*.js']
     },
 
     // jasmine testsuites
@@ -29,7 +29,7 @@ module.exports = function(grunt) {
     // tasks to be executed and files
     // to be watched for changes
     watch: {
-      files: ['<config:lint.files>'],
+      files: ['<config:lint.files>','<config:jasmine.files>'],
       tasks: ['lint', 'jasmine']
     },
 
@@ -84,7 +84,15 @@ module.exports = function(grunt) {
         console: true,
         require: true,
         define: true,
-        $: true
+        $: true,
+        describe: true,
+        xdescribe: true,
+        it: true,
+        xit: true,
+        expect: true,
+        beforeEach: true,
+        afterEach: true,
+        sinon: true
       }
     },
 

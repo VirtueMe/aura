@@ -1,9 +1,9 @@
 // ## Permissions Extension
 // @fileOverview Extend the aura-core permissions
-define(['aura_perms'], function(permissions) {
+define(['aura_perms', 'module'], function(permissions, module) {
   'use strict';
 
-  permissions.extend({
+  var config = module.config ? module.config() : {
     todos: {
       'bootstrap': true,
       'new-event': true,
@@ -20,7 +20,9 @@ define(['aura_perms'], function(permissions) {
     router: {
       '*': true
     }
-  });
+  };
+
+  permissions.extend(config);
 
   return permissions;
 });

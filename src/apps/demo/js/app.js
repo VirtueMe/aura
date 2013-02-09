@@ -9,40 +9,16 @@ if (typeof Object.create !== 'function') {
 
 // Starts main modules
 // Publishing from core because that's the way that Nicholas did it...
-define(['aura_core', 'perms', 'backboneSandbox'], function(core, permissions, backboneSandbox) {
+define(['aura_core', 'perms', 'backboneSandbox', 'module'], function(core, permissions, backboneSandbox, module) {
   'use strict';
 
   core.getSandbox = function(sandbox) {
     return backboneSandbox.extend(sandbox);
   };
 
-  core.start({
-    'todos': {
-      options: {
-        element: '#todoapp'
-      }
-    },
-    'calendar': {
-      options: {
-        element: '#calendarapp'
-      }
-    },
-    'controls': {
-      options: {
-        element: '#controlsapp'
-      }
-    },
-    'boilerplate': {
-      options: {
-        element: '#boilerplateapp'
-      }
-    },
-    'router': {
-      options: {
-        element: '#router'
-      }
-    }
-  });
+  var startconfig = module.config ? module.config() : {};
+
+  core.start( startconfig.widgets || {});
 
 
 });

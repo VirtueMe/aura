@@ -9,7 +9,7 @@
 // * [Nicholas Zakas: Scalable JavaScript Application Architecture](http://www.youtube.com/watch?v=vXjVFPosQHw&feature=youtube_gdata_player)
 // * [Writing Modular JavaScript: New Premium Tutorial](http://net.tutsplus.com/tutorials/javascript-ajax/writing-modular-javascript-new-premium-tutorial/)
 // include 'deferred' if using zepto
-define(['aura_base', 'aura_sandbox', 'aura_perms', 'eventemitter'], function(base, sandbox, permissions, EventEmitter) {
+define(['aura_base', 'aura_sandbox', 'aura_perms', 'eventemitter', 'module'], function(base, sandbox, permissions, EventEmitter, module) {
 
   'use strict';
 
@@ -19,6 +19,8 @@ define(['aura_base', 'aura_sandbox', 'aura_perms', 'eventemitter'], function(bas
   var isWidgetLoading = false;
   var WIDGETS_PATH = 'widgets'; // Path to widgets
   var sandboxSerial = 0; // For unique widget sandbox module names
+
+  var auraconfig = module.config ? module.config() : {};
 
 
   // Load in the base library, such as Zepto or jQuery. the following are
@@ -115,7 +117,8 @@ define(['aura_base', 'aura_sandbox', 'aura_perms', 'eventemitter'], function(bas
 
   // Get the widgets path
   core.getWidgetsPath = function() {
-    return WIDGETS_PATH;
+    // let this be the only way to get the correct widgets path
+    return auraconfig.widgets || WIDGETS_PATH;
   };
 
   // Handle logging request from channel
@@ -258,11 +261,6 @@ define(['aura_base', 'aura_sandbox', 'aura_perms', 'eventemitter'], function(bas
       var file = decamelize(module);
       var dfd = core.data.deferred();
       var widgetsPath = core.getWidgetsPath();
-      var requireConfig = require.aura;
-
-      if (requireConfig.paths && requireConfig.paths.hasOwnProperty('widgets')) {
-        widgetsPath = requireConfig.paths.widgets;
-      }
 
       var widgetPath = widgetsPath + '/' + file;
       // Unique sandbox module to be used by this widget
