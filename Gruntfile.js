@@ -64,7 +64,8 @@ module.exports = function (grunt) {
       all: {
           options: {
               urls: ['http://localhost:<%= connect.server.options.port %>/spec/index.html']
-          }
+          },
+
       }
     },
     watch: {
@@ -76,7 +77,7 @@ module.exports = function (grunt) {
     }
   });
 
-  grunt.registerTask('build', ['jshint', 'mocha', 'requirejs']);
-  grunt.registerTask('test', ['connect', 'build']);
-  grunt.registerTask('default', ['connect', 'build', 'watch']);
+  grunt.registerTask('build', ['test', 'requirejs']);
+  grunt.registerTask('test', ['connect', 'jshint', 'mocha']);
+  grunt.registerTask('default', ['build', 'watch']);
 };
