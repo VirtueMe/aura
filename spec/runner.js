@@ -1,9 +1,10 @@
-/*global define mocha */
+/* globals define:true, mocha:true */
 var should;
 
 require.config({
   baseUrl: '../',
   paths: {
+    jquery: 'bower_components/jquery/jquery',
     components: 'components',
     aura: 'lib',
     aura_components: 'spec/aura_components',

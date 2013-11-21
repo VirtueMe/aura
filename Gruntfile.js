@@ -1,3 +1,4 @@
+/* globals module:true */
 module.exports = function (grunt) {
   'use strict';
 
@@ -73,8 +74,8 @@ module.exports = function (grunt) {
       },
       dist: {
         src: ['dist/aura.js'],
-        dest: 'dist/aura.js',
-      },
+        dest: 'dist/aura.js'
+      }
     },
     yuidoc: {
       compile: {
@@ -97,7 +98,8 @@ module.exports = function (grunt) {
         files: {
           src: [
             'lib/**/*.js',
-            'spec/lib/**/*.js'
+            'spec/**/*.js',
+            'Gruntfile.js'
           ]
         }
       }
@@ -112,7 +114,8 @@ module.exports = function (grunt) {
     watch: {
       files: [
         'lib/**/*.js',
-        'spec/lib/**/*.js'
+        'spec/**/*.js',
+        'Gruntfile.js'
       ],
       tasks: ['spec']
     }

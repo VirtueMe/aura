@@ -1,8 +1,11 @@
-define(['aura/aura', 'aura/ext/components'], function (aura, ext) {
+define(['jquery', 'aura/aura', 'aura/ext/components'], function ($, aura, ext) {
   'use strict';
   /*global describe:true, it:true, beforeEach:true, before:true, alert:true, sinon:true */
+  var appConfig_components_namepace = 'spec/aura_components';
+  var aura_components_default = 'aura_components';
 
-  var appConfig = { components: { sources: { 'default' : 'spec/components' } } };
+  var appConfig = { sources: { 'default' : appConfig_components_namepace } };
+
   var appsContainer = $('<div>').attr('style', 'display:none');
   $('body').append(appsContainer);
 
@@ -12,30 +15,38 @@ define(['aura/aura', 'aura/ext/components'], function (aura, ext) {
     return container;
   }
 
-  function makeSpyComponent(name, definition) {
+  function makeSpyComponent(namespace, name, definition) {
     // sourceName = sourceName || "default";
-    if (!/\@/.test(name)) {
-      name = name + '@default';
-    }
+
     definition = definition || { initialize: sinon.spy() };
+
     var spyComponent = sinon.spy(function () { return definition; });
-    define('__component__$' + name, spyComponent);
+    define(namespace + '/' + name + '/main', spyComponent);
+
     return spyComponent;
   }
 
   describe('Components API', function () {
     var app, BaseComponent;
     var yeahInit = sinon.spy();
-    var yeahComponent = makeSpyComponent('yeah', { initialize: yeahInit });
+
+    var yeahComponent = makeSpyComponent(appConfig_components_namepace, 'yeah', { initialize: yeahInit });
 
     describe('Playing with Components', function () {
       beforeEach(function (done) {
+        var container = buildAppMarkup('<div data-aura-component="dummy"></div><div data-aura-component="yeah"></div>');
+
         app = aura(appConfig);
-        var container = buildAppMarkup('<div id="dummy-' + app.ref + '" data-aura-component="dummy"></div><div data-aura-component="yeah"></div>');
-        app.start({ components: container }).then(function () {
-          BaseComponent = app.core.Components.Base;
-          done();
-        });
+
+        app
+          .start({
+            components: container
+          })
+          .done(
+            function () {
+              BaseComponent = app.core.Components.Base;
+              done();
+          });
       });
 
       describe('Components Extension', function () {
@@ -46,13 +57,16 @@ define(['aura/aura', 'aura/ext/components'], function (aura, ext) {
       });
 
       describe('Loading Components', function () {
-        it('Should call the component\'s initialize method on start', function () {
-          yeahInit.should.have.been.called;
+        it ('should load the components definition on start', function () {
+          yeahComponent.should.have.been.called;
         });
+
       });
 
       describe('Starting Components', function () {
-
+        it('Should call the component\'s initialize method on start', function () {
+          yeahInit.should.have.been.called;
+        });
       });
 
       describe('Starting a list of components', function () {
@@ -68,7 +82,7 @@ define(['aura/aura', 'aura/ext/components'], function (aura, ext) {
 
       var app, options;
 
-      var myLegacyWidget = makeSpyComponent('legacy_widget', {
+      var myLegacyWidget = makeSpyComponent(aura_components_default, 'legacy_widget', {
         initialize: function () {}
       });
 
@@ -78,9 +92,13 @@ define(['aura/aura', 'aura/ext/components'], function (aura, ext) {
         var container = buildAppMarkup(markup);
 
         app = aura();
-        app.start({ components: container }).done(function () {
-          setTimeout(done, 0);
-        });
+        app
+          .start({
+            components: container
+          })
+          .done(function () {
+            done();
+          });
       });
 
       it('Legacy data-aura-widget attribute should be recognized', function () {
@@ -92,7 +110,7 @@ define(['aura/aura', 'aura/ext/components'], function (aura, ext) {
     describe('Using alternate namespace for data-attributes...', function () {
       var app, options;
 
-      var myAltComponent = makeSpyComponent('alt_namespace', {
+      var myAltComponent = makeSpyComponent(aura_components_default, 'alt_namespace', {
         options: {
           foo: 'bar',
           another: 'toutafait'
@@ -115,9 +133,13 @@ define(['aura/aura', 'aura/ext/components'], function (aura, ext) {
         var container = buildAppMarkup(markup);
 
         app = aura({ namespace: 'super' });
-        app.start({ components: container }).done(function () {
-          setTimeout(done, 0);
-        });
+        app
+          .start({
+            components: container
+          })
+          .done(function () {
+            done();
+          });
       });
 
       it('Data attributes with alternate namespace should be recognized', function () {
@@ -162,18 +184,25 @@ define(['aura/aura', 'aura/ext/components'], function (aura, ext) {
         foo: 'nope'
       };
 
-      makeSpyComponent('my_component', my_component);
+      makeSpyComponent(appConfig_components_namepace, 'my_component', my_component);
 
       before(function (done) {
         var container = buildAppMarkup('<div data-aura-component="my_component"></div>');
+
         var app = aura(appConfig);
-        app.use(ext).start({ components: container }).done(function () {
+
+        app
+          .use(ext)
+          .start({
+            components: container
+          })
+          .done(function () {
           // Hum... a little bit hacky
           // The promise resolves when the app is loaded...
           // not when the components are started...
           // TODO: what should we do ?
-          setTimeout(done, 0);
-        });
+            done();
+          });
       });
 
       it('Should use the right type if asked to...', function () {
@@ -187,17 +216,28 @@ define(['aura/aura', 'aura/ext/components'], function (aura, ext) {
       // Nesting means that if a component's markup contains data-aura-component elements,
       // They should be started recursively
       var container = buildAppMarkup('<div data-aura-component="parent"></div>');
-      var childComponent = makeSpyComponent('child');
+      var childComponent;
+
       before(function(done) {
-        var parentComponent = makeSpyComponent('parent', {
+        var parentComponent = makeSpyComponent(aura_components_default, 'parent', {
           initialize: function() {
             this.html('<div data-aura-component="child"></div>');
-            setTimeout(done, 0);
           }
         });
 
+        // Moved det creation of child component inside the before function to use done.
+        childComponent = makeSpyComponent(aura_components_default, 'child', {
+          initialize: function () {
+            done();
+          }
+        });
+
+
         app = aura();
-        app.start({ components: container });
+        app
+          .start({
+            components: container
+          });
       });
 
       it('Should should auto start the child component once parent is rendered', function() {
@@ -208,7 +248,7 @@ define(['aura/aura', 'aura/ext/components'], function (aura, ext) {
 
     describe('Adding new components source locations...', function () {
       var app;
-      var myExternalComponent = makeSpyComponent('ext_component@anotherSource');
+      var myExternalComponent = makeSpyComponent('remoteComponents', 'ext_component');
 
       before(function (done) {
         app = aura();
@@ -218,9 +258,14 @@ define(['aura/aura', 'aura/ext/components'], function (aura, ext) {
 
         // app start...
         var container = buildAppMarkup('<div data-aura-component="ext_component@anotherSource"></div>');
-        app.start({ components: container }).done(function () {
-          setTimeout(done, 0);
-        });
+
+        app
+          .start({
+            components: container
+          })
+          .done(function () {
+            done();
+          });
       });
 
       it('Should be possible to add new sources locations for components', function () {
@@ -234,7 +279,7 @@ define(['aura/aura', 'aura/ext/components'], function (aura, ext) {
     });
 
     describe('Adding new components source via an extension', function () {
-      var anExternalComponent = makeSpyComponent('ext_component@aSource');
+      var anExternalComponent = makeSpyComponent('aUrl', 'ext_component');
 
       var app, ext = {
         initialize: function (app) {
@@ -244,8 +289,17 @@ define(['aura/aura', 'aura/ext/components'], function (aura, ext) {
 
       before(function (done) {
         var container = buildAppMarkup('<div data-aura-component="ext_component@aSource"></div>');
+
         app = aura();
-        app.use(ext).start({ components: container }).done(function () { setTimeout(done, 0); });
+
+        app
+          .use(ext)
+          .start({
+            components: container
+          })
+          .done(function () {
+            done();
+          });
       });
 
       it('Should load the source via the extension', function () {
@@ -260,7 +314,7 @@ define(['aura/aura', 'aura/ext/components'], function (aura, ext) {
 
       before(function(done) {
         var container = buildAppMarkup('<div id="a-component"></div>');
-        var aComponent = makeSpyComponent('a_component_with_callbacks', {
+        var aComponent = makeSpyComponent(aura_components_default, 'a_component_with_callbacks', {
           initialize: function() {
             if (this.beforeInitializeCalled) {
               spy();
@@ -304,7 +358,14 @@ define(['aura/aura', 'aura/ext/components'], function (aura, ext) {
 
       it('should have called the before callback before initialize', function() {
         spy.should.have.been.called;
+
+      });
+
+      it('should have called the after callback ', function() {
         spyAfter.should.have.been.called;
+      });
+
+      it('should have called the after callback when invoking a method with callbacks', function() {
         spyCustom.should.have.been.called;
       });
     });
@@ -315,11 +376,15 @@ define(['aura/aura', 'aura/ext/components'], function (aura, ext) {
       var mediator;
       before(function (done) {
         app = aura();
-        app.start({ components: false }).done(function () {
-          mediator = app.core.mediator;
-          sandbox = app.sandboxes.create();
-          setTimeout(done, 0);
-        });
+        app
+          .start({
+            components: false
+          })
+          .done(function () {
+            mediator = app.core.mediator;
+            sandbox = app.sandboxes.create();
+            done();
+          });
       });
 
       describe('#start', function () {
