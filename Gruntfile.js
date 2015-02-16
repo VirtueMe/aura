@@ -40,6 +40,7 @@ module.exports = function (grunt) {
           baseUrl: '.',
           optimize: 'uglify2',
           preserveLicenseComments: false,
+          generateSourceMaps: true,
           paths: {
             aura: 'lib',
             jquery: 'empty:',
